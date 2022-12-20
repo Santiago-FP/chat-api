@@ -77,18 +77,56 @@ const removeConversation = async (id) => {
     return data
 }
 
-//* createConversation({
-//*     title: 'Conversacion Sahid - Evertz',//? Titulo del chat
-//*     ownerId: 'db8b69e8-3233-43a0-a0b1-87774ffc8566', //? Evertz como owner
-//*     participantId: 'c4a8c88d-37a8-4c38-b251-8cef07c33145' //? Sahid como invitado
-//* })
-//* .then(data => console.log(data))
-//* .catch(err => console.log(err))
+
+
+//optional challenges
+//finds all participants of a conversation
+const findConversationParticipants = async (conversationId) => {
+    const data = await Participants.findAll({
+        where: {
+            conversationId: conversationId
+        }
+    })
+    return data
+}
+//add new participant
+const addParticipants = async (conversationId,userId) => {
+    const participant = await Participants.create({
+        id: uuid.v4(),
+        userId: userId,
+        conversationId: conversationId
+    })
+    return participant
+}
+//get participant by id
+const findParticipantById = async (conversationId, userId) => {
+    const participant = await Participants.findOne({
+        where: {
+            userId: userId,
+            conversationId: conversationId
+        }
+    })
+    return participant
+}
+//remove a participant
+const removeParticipant = async (conversationId,userId) => {
+    const participant = await Participants.destroy({
+        where: {
+            conversationId: conversationId,
+            userId: userId
+        }
+    })
+    return participant
+}
 
 module.exports = {
     findAllConversations,
     createConversation, 
     findConversationById,
     updateConversation,
-    removeConversation
+    removeConversation,
+    findConversationParticipants,
+    addParticipants,
+    findParticipantById,
+    removeParticipant
 }

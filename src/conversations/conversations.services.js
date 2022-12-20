@@ -73,10 +73,93 @@ const deleteConvesation = (req, res) => {
         }) 
 }
 
+//find participants
+const getConversationParticipants = (req,res) => {
+    const conversationId = req.params.conversation_id
+    conversationController.findConversationParticipants(conversationId)
+        .then(data => {
+            if(data){
+                res.status(200).json(data)
+            }else{
+                res.status(404).json({message: "Invalid conversation Id"})
+            }
+        })
+        .catch(err => {
+            res.status(400).json({message: err.message})
+        })
+}
+//Add participants
+const postParticipants = (req,res) => {
+    const conversationId = req.params.conversation_id
+    const participantId = req.body.userId
+
+    //verify if user already exists in the conversation
+    conversationController.findParticipantById(conversationId,participantId)
+        .then(data => {
+            if(data){
+                res.status(400).json({message: "User is already a participant"})
+            }else{
+                //if user is not in the conversation he will be added
+                conversationController.addParticipants(conversationId,participantId)
+                .then(data => {
+                    if(data){
+                        res.status(201).json({message: "participant added"})
+                    }else{
+                        res.status(404).json({message:"Invalid userId or conversationId"})
+                    }
+                })
+                .catch(err => {
+                    res.status(400).json({message: err.message})
+                })    
+
+            }
+        })
+
+    
+}
+
+//get one participant by id
+const getParticipant = (req,res) => {
+    const conversationId = req.params.conversation_id
+    const participantId = req.params.participant_id
+    conversationController.findParticipantById(conversationId,participantId)
+        .then(data => {
+            if(data){
+                res.status(200).json(data)
+            }else{
+                res.status(404).json({message: "Participant not found"})
+            }
+        })
+        .catch(err => {
+            res.status(400).json({message: err.message})
+        })
+}
+
+// Remove participant
+const deleteParticipant = (req,res) => {
+    const conversationId = req.params.conversation_id
+    const participantId = req.params.participant_id
+    conversationController.removeParticipant(conversationId,participantId)
+        .then(data => {
+            if(data){
+                res.status(204).json()
+            }else{
+                res.status(404).json({message:"Participant not found"})
+            }
+        })
+        .catch(err => {
+            res.status(400).json({message: err.message})
+        })
+}
+
 module.exports = {
     getAllConversations,
     postConversation,
     getConversationById,
     patchConversation,
-    deleteConvesation
+    deleteConvesation,
+    getConversationParticipants,
+    postParticipants,
+    getParticipant,
+    deleteParticipant
 }

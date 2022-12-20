@@ -15,3 +15,4 @@ Cuando queremos recuperar una contraseña hago una peticion que me pide el email
 
 
 
+Se añadio la funcionalidad de obtener participantes de una conversacion, añadir participantes, o borrarlos
